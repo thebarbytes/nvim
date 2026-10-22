@@ -7,55 +7,6 @@
 -- =============================================================================
 
 return {
-  -- 1. Completely disable lualine so it doesn't run in the background
-  { "nvim-lualine/lualine.nvim", enabled = false },
-
-  -- 2. Install and configure mini.statusline
-  {
-    "nvim-mini/mini.statusline",
-    version = false,
-    event = "VeryLazy",
-    config = function()
-      require("mini.statusline").setup({
-        -- Use icons (requires a Nerd Font like JetBrains Mono)
-        use_icons = true,
-
-        -- Optional: customize content sections if you want a specific layout
-        content = {
-          active = function()
-            local statusline = require("mini.statusline")
-
-            local mode, mode_hl = statusline.section_mode({ trunc_width = 120 })
-            local git = statusline.section_git({ trunc_width = 40 })
-            local diff = statusline.section_diff({ trunc_width = 75 })
-            local diagnostics = statusline.section_diagnostics({ trunc_width = 75 })
-            local filename = statusline.section_filename({ trunc_width = 140 })
-            local fileinfo = statusline.section_fileinfo({ trunc_width = 120 })
-            local location = statusline.section_location({ trunc_width = 75 })
-
-            return statusline.combine_groups({
-              { hl = mode_hl, strings = { mode } },
-              { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics } },
-              "%<", -- Mark truncation point
-              { hl = "MiniStatuslineFilename", strings = { filename } },
-              "%=", -- End left alignment / start right alignment
-              { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
-              { hl = mode_hl, strings = { location } },
-            })
-          end,
-        },
-      })
-    end,
-  },
-
-  -- ===========================================================================
-  -- WakaTime — time tracking. Key is read from ~/.wakatime.cfg.
-  -- ===========================================================================
-  {
-    "wakatime/vim-wakatime",
-    lazy = false,
-  },
-
   -- {
   --   "hrsh7th/nvim-cmp",
   --   opts = function(_, opts)
@@ -71,137 +22,137 @@ return {
   -- LSP — extra servers LazyVim/mason doesn't set up for you by default,
   -- using the same manual `cmd` paths you had before (bypasses mason install).
   -- ===========================================================================
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        clangd = {
-          mason = false,
-          cmd = {
-            "clangd",
-            "--background-index",
-            "--clang-tidy",
-            "--header-insertion=never",
-            "--completion-style=detailed",
-            "--function-arg-placeholders=false",
-          },
-        },
-        astro = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.npm-global/bin/astro-ls"), "--stdio" },
-          init_options = {
-            typescript = {
-              tsdk = vim.fn.expand("$HOME/.npm-global/lib/node_modules/typescript/lib"),
-            },
-          },
-        },
-        pyright = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.npm-global/bin/pyright-langserver"), "--stdio" },
-        },
-        csharp_ls = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.dotnet/tools/csharp-ls") },
-        },
-        intelephense = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.npm-global/bin/intelephense"), "--stdio" },
-        },
-        tailwindcss = {
-          mason = false,
-        },
-        lua_ls = {
-          settings = {
-            Lua = {
-              runtime = { version = "LuaJIT" },
-              diagnostics = { globals = { "vim" } },
-              telemetry = { enable = false },
-            },
-          },
-        },
-        asm_lsp = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.cargo/bin/asm-lsp") },
-          filetypes = { "asm", "nasm", "masm" },
-          init_options = { dialect = "nasm" },
-        },
-        neocmakelsp = {
-          mason = false,
-          cmd = { "neocmakelsp", "--stdio" },
-          init_options = {
-            format = { enable = true },
-            scan_cmake_in_package = true,
-          },
-        },
-        rust_analyzer = {
-          mason = false,
-          cmd = { vim.fn.expand("$HOME/.cargo/bin/rust-analyzer") },
-          settings = {
-            ["rust-analyzer"] = {
-              checkOnSave = { command = "clippy" },
-              cargo = { allFeatures = true },
-              procMacro = { enable = true },
-            },
-          },
-        },
-        marksman = { mason = false },
-        bashls = { mason = true },
-      },
-    },
-  },
-
-  -- Disable diagnostics for asm files (asm-lsp is noisy)
-  {
-    "neovim/nvim-lspconfig",
-    init = function()
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "asm", "nasm", "masm" },
-        callback = function()
-          vim.diagnostic.enable(false, { bufnr = 0 })
-        end,
-      })
-    end,
-  },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   opts = {
+  --     servers = {
+  --       clangd = {
+  --         mason = false,
+  --         cmd = {
+  --           "clangd",
+  --           "--background-index",
+  --           "--clang-tidy",
+  --           "--header-insertion=never",
+  --           "--completion-style=detailed",
+  --           "--function-arg-placeholders=false",
+  --         },
+  --       },
+  --       astro = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.npm-global/bin/astro-ls"), "--stdio" },
+  --         init_options = {
+  --           typescript = {
+  --             tsdk = vim.fn.expand("$HOME/.npm-global/lib/node_modules/typescript/lib"),
+  --           },
+  --         },
+  --       },
+  --       pyright = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.npm-global/bin/pyright-langserver"), "--stdio" },
+  --       },
+  --       csharp_ls = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.dotnet/tools/csharp-ls") },
+  --       },
+  --       intelephense = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.npm-global/bin/intelephense"), "--stdio" },
+  --       },
+  --       tailwindcss = {
+  --         mason = false,
+  --       },
+  --       lua_ls = {
+  --         settings = {
+  --           Lua = {
+  --             runtime = { version = "LuaJIT" },
+  --             diagnostics = { globals = { "vim" } },
+  --             telemetry = { enable = false },
+  --           },
+  --         },
+  --       },
+  --       asm_lsp = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.cargo/bin/asm-lsp") },
+  --         filetypes = { "asm", "nasm", "masm" },
+  --         init_options = { dialect = "nasm" },
+  --       },
+  --       neocmakelsp = {
+  --         mason = false,
+  --         cmd = { "neocmakelsp", "--stdio" },
+  --         init_options = {
+  --           format = { enable = true },
+  --           scan_cmake_in_package = true,
+  --         },
+  --       },
+  --       rust_analyzer = {
+  --         mason = false,
+  --         cmd = { vim.fn.expand("$HOME/.cargo/bin/rust-analyzer") },
+  --         settings = {
+  --           ["rust-analyzer"] = {
+  --             checkOnSave = { command = "clippy" },
+  --             cargo = { allFeatures = true },
+  --             procMacro = { enable = true },
+  --           },
+  --         },
+  --       },
+  --       marksman = { mason = false },
+  --       bashls = { mason = true },
+  --     },
+  --   },
+  --
+  --   -- Disable diagnostics for asm files (asm-lsp is noisy)
+  --   init = function()
+  --     vim.api.nvim_create_autocmd("FileType", {
+  --       pattern = { "asm", "nasm", "masm" },
+  --       callback = function()
+  --         vim.diagnostic.enable(false, { bufnr = 0 })
+  --       end,
+  --     })
+  --     vim.api.nvim_create_autocmd("FileType", {
+  --       pattern = "java",
+  --       callback = function()
+  --         local root_dir = vim.fs.dirname(vim.fs.find({ ".git", "pom.xml", "build.gradle" }, { upward = true })[1])
+  --         local workspace_dir = vim.fn.expand("~/.cache/jdtls-workspace/") .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+  --         vim.lsp.start({
+  --           name = "jdtls",
+  --           cmd = { "jdtls", "-data", workspace_dir },
+  --           root_dir = root_dir,
+  --         })
+  --       end,
+  --     })
+  --   end,
+  -- },
+  --
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --     },
 
   -- jdtls — Java (manual vim.lsp.start, same as old config)
-  {
-    "neovim/nvim-lspconfig",
-    init = function()
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "java",
-        callback = function()
-          local root_dir = vim.fs.dirname(vim.fs.find({ ".git", "pom.xml", "build.gradle" }, { upward = true })[1])
-          local workspace_dir = vim.fn.expand("~/.cache/jdtls-workspace/") .. vim.fn.fnamemodify(root_dir, ":p:h:t")
-          vim.lsp.start({
-            name = "jdtls",
-            cmd = { "jdtls", "-data", workspace_dir },
-            root_dir = root_dir,
-          })
-        end,
-      })
-    end,
-  },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   init = function() end,
+  -- },
 
   -- ===========================================================================
   -- Inline diagnostics — floating-style boxes, replaces default virtual_text
   -- ===========================================================================
-  {
-    "rachartier/tiny-inline-diagnostic.nvim",
-    event = "LspAttach",
-    enabled = false,
-    priority = 1000, -- load before other UI plugins that touch diagnostics
-    config = function()
-      require("tiny-inline-diagnostic").setup({
-        preset = "modern", -- try "classic", "minimal", "powerline", "ghost" too
-        options = {
-          show_source = false,
-          throttle = 20,
-          softwrap = 30, -- wraps long messages instead of letting them overflow
-        },
-      })
-      vim.diagnostic.config({ virtual_text = false }) -- turn off LazyVim's default so they don't overlap
-    end,
-  },
+  -- {
+  --   "rachartier/tiny-inline-diagnostic.nvim",
+  --   event = "LspAttach",
+  --   enabled = false,
+  --   priority = 1000, -- load before other UI plugins that touch diagnostics
+  --   config = function()
+  --     require("tiny-inline-diagnostic").setup({
+  --       preset = "modern", -- try "classic", "minimal", "powerline", "ghost" too
+  --       options = {
+  --         show_source = false,
+  --         throttle = 20,
+  --         softwrap = 30, -- wraps long messages instead of letting them overflow
+  --       },
+  --     })
+  --     vim.diagnostic.config({ virtual_text = false }) -- turn off LazyVim's default so they don't overlap
+  --   end,
+  -- },
 
   -- ===========================================================================
   -- TypeScript — lightweight native tsserver client, replaces ts_ls/typescript.nvim
