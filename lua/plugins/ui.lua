@@ -138,21 +138,35 @@ return {
   --   offsets                          space reserved next to side panels (neo-tree here)
   -- COLORS: the lists below make every state transparent (bg = "NONE").
   --   To give the selected tab a color, change `_selected` to { bg = "#44475a" }.
+
   {
     "akinsho/bufferline.nvim",
     opts = function(_, opts)
+      local c = {
+        bar = "",
+        inactive = "#2b2b2b",
+        active = "#4a4a4a",
+        inactive_fg = "#8a8a8a",
+        active_fg = "#ffffff",
+      }
+
       opts.options = opts.options or {}
       opts.options.always_show_bufferline = true
       opts.options.show_buffer_icons = true
-      opts.options.show_buffer_close_icons = false -- removes the x on each tab
-      opts.options.separator_style = { "", "" } -- removes the line between tabs
-      opts.options.indicator = { style = "none" } -- removes the bar on the active tab
+      opts.options.show_buffer_close_icons = false
+      opts.options.show_close_icon = false
+      opts.options.indicator = { style = "none" }
+      -- opts.options.separator_style = { "", "▓▒░" }
+      -- opts.options.separator_style = { "", "█▓▒░" } -- dither fades out to the right
+      -- opts.options.separator_style = { "", "" } -- dither fades out to the right
+      opts.options.separator_style = { "", "" } -- dither fades out to the right
+      opts.options.tab_size = 12
       opts.options.offsets = {
         { filetype = "neo-tree", text = "", separator = false },
       }
 
-      -- Highlight groups that get a _visible / _selected variant
-      local bases = {
+      -- groups that really have bare + _visible + _selected variants
+      local full = {
         "numbers",
         "diagnostic",
         "hint",
@@ -165,50 +179,33 @@ return {
         "error_diagnostic",
         "modified",
         "duplicate",
-        "separator",
-        "close_button",
-        "pick",
-        "buffer",
-        "indicator",
-      }
-      -- Highlight groups used as-is
-      local bare = {
-        "fill",
-        "background",
-        "tab",
-        "tab_selected",
-        "tab_separator",
-        "tab_separator_selected",
-        "tab_close",
-        "offset_separator",
-        "trunc_marker",
-        "numbers",
-        "diagnostic",
-        "hint",
-        "hint_diagnostic",
-        "info",
-        "info_diagnostic",
-        "warning",
-        "warning_diagnostic",
-        "error",
-        "error_diagnostic",
-        "modified",
-        "duplicate",
-        "separator",
         "close_button",
         "pick",
       }
 
-      local hl = {}
-      for _, name in ipairs(bare) do
-        hl[name] = { bg = "NONE" }
+      local hl = {
+        fill = { bg = c.bar },
+        background = { fg = c.inactive_fg, bg = c.inactive },
+        trunc_marker = { fg = c.inactive_fg, bg = c.bar },
+        offset_separator = { fg = c.bar, bg = c.bar },
+
+        -- these two only exist as _visible / _selected
+        buffer_visible = { fg = c.inactive_fg, bg = c.inactive },
+        buffer_selected = { fg = c.active_fg, bg = c.active, bold = true, italic = false },
+        indicator_visible = { fg = c.inactive, bg = c.inactive },
+        indicator_selected = { fg = c.active, bg = c.active },
+
+        -- the dither: fg = tab colour, bg = bar colour
+        separator = { fg = c.inactive, bg = c.bar },
+        separator_visible = { fg = c.inactive, bg = c.bar },
+        separator_selected = { fg = c.active, bg = c.bar },
+      }
+
+      for _, base in ipairs(full) do
+        hl[base] = hl[base] or { bg = c.inactive }
+        hl[base .. "_visible"] = hl[base .. "_visible"] or { bg = c.inactive }
+        hl[base .. "_selected"] = hl[base .. "_selected"] or { bg = c.active, bold = true, italic = false }
       end
-      for _, base in ipairs(bases) do
-        hl[base .. "_visible"] = { bg = "NONE" }
-        hl[base .. "_selected"] = { bg = "NONE", bold = true, italic = false }
-      end
-      hl.tab_selected = { bg = "NONE", bold = true, italic = false }
-      hl.tab_separator_selected = { bg = "NONE" }
 
       opts.highlights = vim.tbl_deep_extend("force", opts.highlights or {}, hl)
     end,
